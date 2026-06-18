@@ -17,11 +17,12 @@ def generate_document_summary(text: str) -> dict:
     # 1. Try Google Gemini API
     if settings.GEMINI_API_KEY:
         try:
+            # pyrefly: ignore [missing-import]
             import google.generativeai as genai
             genai.configure(api_key=settings.GEMINI_API_KEY)
             
-            # Use gemini-1.5-flash for fast summaries
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # Use gemini-2.5-flash for fast summaries
+            model = genai.GenerativeModel('gemini-2.5-flash')
             
             prompt = (
                 "You are an expert document summarizer. Summarize the following document text. "
@@ -47,6 +48,7 @@ def generate_document_summary(text: str) -> dict:
     # 2. Try OpenAI API (as fallback or alternative)
     if settings.OPENAI_API_KEY:
         try:
+            # pyrefly: ignore [missing-import]
             from openai import OpenAI
             client = OpenAI(api_key=settings.OPENAI_API_KEY)
             

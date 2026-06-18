@@ -1,9 +1,17 @@
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.router import api_router
+from app.core.database import Base, engine
+# Import models so SQLAlchemy is aware of them before creating tables
+from app.models import Document, Summary
 
 def get_application() -> FastAPI:
+    # Create database tables if they do not exist
+    Base.metadata.create_all(bind=engine)
+
     application = FastAPI(
         title=settings.PROJECT_NAME,
         version=settings.VERSION,
