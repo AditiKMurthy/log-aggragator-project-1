@@ -6,6 +6,16 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "AI Document Summarizer & Knowledge Base"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = "e98e217d848bbef6df8bd3652c7b5ff6ca86e24cb11ef6bb1c28c8efd92eb9ff"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
+
+    # SMTP Configuration
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "noreply@logstream.ai"
 
     # Database
     DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/doc_summarizer"

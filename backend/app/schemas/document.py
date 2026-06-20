@@ -15,6 +15,8 @@ class DocumentUpdate(BaseModel):
 
 class DocumentInDBBase(DocumentBase):
     id: int
+    user_id: Optional[int] = None
+    client_ip: Optional[str] = None
     status: ProcessingStatus
     created_at: datetime
     updated_at: datetime
@@ -27,6 +29,8 @@ class DocumentResponse(DocumentInDBBase):
 
 class DocumentDetailResponse(DocumentInDBBase):
     summaries: List["SummaryResponse"] = []
+    chat_messages: List["ChatMessageResponse"] = []
 
 from app.schemas.summary import SummaryResponse
+from app.schemas.chat import ChatMessageResponse
 DocumentDetailResponse.model_rebuild()

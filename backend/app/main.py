@@ -6,7 +6,7 @@ from app.core.config import settings
 from app.api.router import api_router
 from app.core.database import Base, engine
 # Import models so SQLAlchemy is aware of them before creating tables
-from app.models import Document, Summary
+from app.models import Document, Summary, User, UserOTP, ChatMessage
 
 def get_application() -> FastAPI:
     # Create database tables if they do not exist
