@@ -40,29 +40,11 @@ Today's implementations completed the core **User Authentication, Data Isolation
 ## 🛠️ Getting Started
 
 ### 1. Configure Environment Variables
-Create a `.env` file in the root directory (based on `.env.example` if available) and add your keys:
+We use environment variable files (`.env`) to configure credentials and services securely. The repository includes safe template files (`.env.example`) to guide configuration.
 
-```env
-# Database Credentials
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_secure_password
-POSTGRES_DB=doc_summarizer
-
-# AI Provider API Keys
-GEMINI_API_KEY=your_gemini_api_key
-OPENAI_API_KEY=your_openai_api_key
-
-# Frontend Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
-
-# SMTP Email Configuration (Optional, falls back to logging OTP to console if empty)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
-SMTP_FROM=your_email@gmail.com
-```
+* **Project Root**: Copy `.env.example` to `.env` and fill in your keys (used by Docker Compose).
+* **Backend**: Copy `backend/.env.example` to `backend/.env` for running the backend locally.
+* **Frontend**: Copy `frontend/.env.example` to `frontend/.env` for running the frontend locally.
 
 ### 2. Run the Entire Project (Docker Compose)
 To start all dependency services, backend APIs, Celery workers, and the frontend at once, run:
@@ -87,7 +69,7 @@ To run the components individually for local debugging, start the database and R
 * **Celery Worker**:
   ```bash
   cd backend
-  celery -A app.tasks.celery_app.celery worker --loglevel=info
+  celery -A app.tasks.celery_app.celery worker --loglevel=info -P solo
   ```
 * **Frontend**:
   ```bash
@@ -95,3 +77,47 @@ To run the components individually for local debugging, start the database and R
   npm install
   npm run dev
   ```
+
+---
+
+## 🧪 Running Tests
+
+LogStream AI includes comprehensive automated test suites for both the backend (unit, integration, and Celery task logic) and frontend (E2E browser tests).
+
+### 1. Backend Tests (Pytest)
+The backend tests run against a dynamic, in-memory SQLite database, isolating tests from your production/development PostgreSQL database. External APIs (Gemini, OpenAI, SMTP) are fully mocked to allow fast, deterministic execution.
+
+**How to run:**
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Activate your virtual environment:
+   * **Windows:** `.venv\Scripts\activate`
+   * **macOS/Linux:** `source .venv/bin/activate`
+3. Run the pytest suite:
+   ```bash
+   python -m pytest -v
+   ```
+
+### 2. Frontend E2E Tests (Playwright)
+Frontend tests are built using Playwright to verify the UI layout, authentication forms, usage limits banners, and page components.
+
+**How to run:**
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install Playwright browser engines (if running for the first time):
+   ```bash
+   npx playwright install
+   ```
+3. Run the Playwright test suite:
+   ```bash
+   npx playwright test
+   ```
+4. View HTML report of test results (optional):
+   ```bash
+   npx playwright show-report
+   ```
+

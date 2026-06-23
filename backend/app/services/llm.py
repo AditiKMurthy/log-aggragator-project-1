@@ -5,6 +5,42 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+def format_key_points(key_points) -> str:
+    if not key_points:
+        return ""
+    if isinstance(key_points, list):
+        cleaned_items = []
+        for item in key_points:
+            item_str = str(item).strip()
+            if not item_str:
+                continue
+            if not (item_str.startswith("-") or item_str.startswith("*")):
+                item_str = f"- {item_str}"
+            cleaned_items.append(item_str)
+        return "\n".join(cleaned_items)
+    elif isinstance(key_points, str):
+        # Check if it is a JSON array string
+        trimmed = key_points.strip()
+        if trimmed.startswith("[") and trimmed.endswith("]"):
+            try:
+                parsed = json.loads(trimmed)
+                if isinstance(parsed, list):
+                    return format_key_points(parsed)
+            except Exception:
+                pass
+        
+        # It's a plain string, split by lines and make sure each line starts with - or *
+        lines = []
+        for line in key_points.split("\n"):
+            line_str = line.strip()
+            if not line_str:
+                continue
+            if not (line_str.startswith("-") or line_str.startswith("*")):
+                line_str = f"- {line_str}"
+            lines.append(line_str)
+        return "\n".join(lines)
+    return str(key_points)
+
 def generate_document_summary(text: str) -> dict:
     """
     Call the AI provider (Gemini or OpenAI) to summarize the text and extract key points.
@@ -18,11 +54,11 @@ def generate_document_summary(text: str) -> dict:
     if settings.GEMINI_API_KEY:
         try:
             # pyrefly: ignore [missing-import]
-            import google.generativeai as genai
-            genai.configure(api_key=settings.GEMINI_API_KEY)
+            from google import genai
+            # pyrefly: ignore [missing-import]
+            from google.genai import types
             
-            # Use gemini-2.5-flash for fast summaries
-            model = genai.GenerativeModel('gemini-2.5-flash')
+            client = genai.Client(api_key=settings.GEMINI_API_KEY)
             
             prompt = (
                 "You are an expert document summarizer. Summarize the following document text. "
@@ -32,15 +68,19 @@ def generate_document_summary(text: str) -> dict:
                 f"Document text:\n{truncated_text}"
             )
             
-            response = model.generate_content(
-                prompt,
-                generation_config={"response_mime_type": "application/json"}
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
             )
             
             result = json.loads(response.text)
+            kp = result.get("key_points", "")
             return {
                 "summary": result.get("summary", ""),
-                "key_points": result.get("key_points", "")
+                "key_points": format_key_points(kp)
             }
         except Exception as e:
             logger.error(f"Gemini API generation failed: {str(e)}")
@@ -69,9 +109,10 @@ def generate_document_summary(text: str) -> dict:
             )
             
             result = json.loads(response.choices[0].message.content)
+            kp = result.get("key_points", "")
             return {
                 "summary": result.get("summary", ""),
-                "key_points": result.get("key_points", "")
+                "key_points": format_key_points(kp)
             }
         except Exception as e:
             logger.error(f"OpenAI API generation failed: {str(e)}")
@@ -110,9 +151,8 @@ def generate_document_answer(text: str, question: str, chat_history: list = None
     if settings.SECRET_KEY and settings.GEMINI_API_KEY:
         try:
             # pyrefly: ignore [missing-import]
-            import google.generativeai as genai
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            model = genai.GenerativeModel('gemini-2.5-flash')
+            from google import genai
+            client = genai.Client(api_key=settings.GEMINI_API_KEY)
             
             prompt = (
                 "You are an assistant answering questions about the following document context. "
@@ -123,7 +163,10 @@ def generate_document_answer(text: str, question: str, chat_history: list = None
                 f"User question: {question}"
             )
             
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
             return response.text.strip()
         except Exception as e:
             logger.error(f"Gemini API Q&A generation failed: {str(e)}")

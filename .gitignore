@@ -45,6 +45,7 @@ venv.bak/
 .env.test.local
 .env.production.local
 backend/.env
+frontend/.env
 frontend/.env.local
 
 # Databases / Data

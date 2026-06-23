@@ -1,0 +1,4 @@
+2026-06-23 11:30:15 - INFO - User login attempt: test@example.com
+2026-06-23 11:30:16 - INFO - User login successful
+2026-06-23 11:30:20 - ERROR - Failed to fetch database connection: timeout
+2026-06-23 11:31:00 - INFO - Database connection retried and succeeded

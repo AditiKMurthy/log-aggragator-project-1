@@ -34,7 +34,7 @@ interface DocumentDetail extends Document {
   chat_messages: ChatMessage[];
 }
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
 export default function Home() {
   // Document States
@@ -122,7 +122,7 @@ export default function Home() {
       setError(null);
     } catch (err: any) {
       console.error(err);
-      setError("Unable to connect to the backend services. Please ensure docker containers are fully running.");
+      setError("Unable to connect to the backend services. Please ensure the backend server is running.");
     } finally {
       if (!silent) setLoading(false);
     }
@@ -527,9 +527,14 @@ export default function Home() {
     if (typeof window !== "undefined" && (authModal === "login" || authModal === "signup")) {
       const initGoogle = () => {
         const win = window as any;
+        const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
         if (win.google?.accounts?.id) {
+          if (!clientId) {
+            console.warn("Google Client ID is missing. Please configure NEXT_PUBLIC_GOOGLE_CLIENT_ID in your env variables.");
+            return;
+          }
           win.google.accounts.id.initialize({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "1036329767931-m0c29oif9c95g0nsh8h7c9v2q5iia6k3.apps.googleusercontent.com", // standard credentials or fallbacks
+            client_id: clientId,
             callback: (response: any) => {
               handleGoogleCallback(response.credential);
             }

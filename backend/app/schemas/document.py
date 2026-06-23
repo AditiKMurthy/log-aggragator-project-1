@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.models.document import ProcessingStatus
 
 class DocumentBase(BaseModel):
@@ -21,8 +21,7 @@ class DocumentInDBBase(DocumentBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class DocumentResponse(DocumentInDBBase):
     pass
