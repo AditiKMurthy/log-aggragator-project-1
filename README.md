@@ -4,6 +4,19 @@ LogStream AI is a modern, high-performance web application designed to ingest, p
 
 ---
 
+## 🔗 Live Application
+
+The project is deployed and accessible at the following link:
+👉 **[LogStream AI Live Demo](https://log-aggragator-project-1.vercel.app/)**
+
+> [!IMPORTANT]
+> **Free Tier Deployment Limitations:**
+> * **Backend Cold Starts (Render):** The backend API is hosted on Render's Free instance type. If there has been no traffic to the application for 15 minutes, the backend automatically spins down (enters sleep mode). When you access the app after this inactivity, the first action (like signing in or uploading a file) will trigger a cold start, which takes **about 50 seconds to 1 minute** to spin back up. Please wait a moment for the server to wake up!
+> * **API High Demand & Rate Limits (Gemini API):** The app uses Google Gemini's free tier. During peak hours, Google's free-tier servers can experience high congestion, returning a `503 Service Unavailable (High Demand)` error. Additionally, there is a rate limit of 15 requests per minute. If the app displays a placeholder summary or falls back to an offline Q&A search, simply wait **1 to 2 minutes** and try again.
+> * **Temporary Document Storage:** Uploaded files are saved on an ephemeral filesystem on Render. When Render builds, redeploys, or restarts after inactivity, any previously uploaded log files are permanently deleted from the server's local disk. To use the **Interactive Q&A Chat**, please upload a new log file to ensure it is present on the server.
+
+---
+
 ## 🏗️ Project Architecture
 
 The application is structured as a multi-service containerized environment orchestrated by Docker Compose:
