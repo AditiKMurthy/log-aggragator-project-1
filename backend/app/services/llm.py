@@ -69,7 +69,7 @@ def generate_document_summary(text: str) -> dict:
             )
             
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model=settings.GEMINI_MODEL,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json"
@@ -164,7 +164,7 @@ def generate_document_answer(text: str, question: str, chat_history: list = None
             )
             
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model=settings.GEMINI_MODEL,
                 contents=prompt
             )
             return response.text.strip()

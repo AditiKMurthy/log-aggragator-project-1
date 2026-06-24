@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # AI Provider Keys
     GEMINI_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     # CORS settings
     BACKEND_CORS_ORIGINS: List[Union[str, AnyHttpUrl]] = [
